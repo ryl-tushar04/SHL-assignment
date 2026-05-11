@@ -70,18 +70,21 @@ class CatalogVectorStore:
         logger.info("Vector index built and saved.")
 
     def load(self) -> bool:
-        """Try to load persisted index. Return True if successful."""
-        if INDEX_FILE.exists() and META_FILE.exists():
-            try:
-                self.index = faiss.read_index(str(INDEX_FILE))
-                with open(META_FILE, "rb") as f:
-                    self.doc_texts, self.catalog = pickle.load(f)
-                self.embedder = _load_embedder()
-                logger.info(f"Loaded FAISS index ({self.index.ntotal} vectors).")
-                return True
-            except Exception as e:
-                logger.warning(f"Failed to load index: {e}")
-        return False
+    """Try to load persisted index. Return True if successful."""
+    if INDEX_FILE.exists() and META_FILE.exists():
+        try:
+            self.index = faiss.read_index(str(INDEX_FILE))
+
+            with open(META_FILE, "rb") as f:
+                self.doc_texts, self.catalog = pickle.load(f)
+
+            logger.info(f"Loaded FAISS index ({self.index.ntotal} vectors).")
+            return True
+
+        except Exception as e:
+            logger.warning(f"Failed to load index: {e}")
+
+    return False
 
     def search(self, query: str, k: int = 10, filters: Optional[dict] = None) -> list[dict]:
         """

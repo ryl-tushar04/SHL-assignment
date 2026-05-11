@@ -98,8 +98,11 @@ class CatalogVectorStore:
           - max_duration: int  (minutes)
         Returns up to k matching assessments, sorted by relevance.
         """
-        if self.index is None or self.embedder is None:
+        if self.index is None:
             raise RuntimeError("Index not built/loaded.")
+
+        if self.embedder is None:
+            self.embedder = _load_embedder()
 
         query_vec = self.embedder.encode([query], show_progress_bar=False)
         query_vec = np.array(query_vec, dtype="float32")

@@ -58,8 +58,7 @@ async def lifespan(app: FastAPI):
     store = CatalogVectorStore(catalog)
 
     if not store.load():
-        logger.info("Building vector store for first startup...")
-        store.build()
+        raise RuntimeError("Prebuilt vector store missing.")
 
     _vector_store = store
 

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+httpx
+beautifulsoup4
+lxml
+faiss-cpu
+sentence-transformers
+python-dotenv
+groq
+anthropic

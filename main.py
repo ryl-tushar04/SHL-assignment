@@ -46,19 +46,21 @@ async def lifespan(app: FastAPI):
     logger.info("=== SHL Recommender starting up ===")
 
     # 1. Load or scrape catalog
-    catalog = load_or_scrape_catalog()
+    # 1. Load ONLY local catalog
+    import json
+
+    with open("catalog.json", "r") as f:
+          catalog = json.load(f)
+
     logger.info(f"Catalog loaded: {len(catalog)} assessments")
 
-    # 2. Build or load vector store
-    store = CatalogVectorStore(catalog)
+# 2. Load ONLY prebuilt vector store
+     store = CatalogVectorStore(catalog)
 
-    loaded = store.load()
+     if not store.load():
+           raise RuntimeError("Prebuilt vector store missing.")
 
-    if not loaded:
-        logger.error("Prebuilt vector store not found.")
-        raise RuntimeError("Vector store missing. Build locally before deployment.")
-
-    _vector_store = store
+      _vector_store = store
 
     _startup_time = time.time() - t0
     logger.info(f"Startup complete in {_startup_time:.1f}s")
